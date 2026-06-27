@@ -1,0 +1,146 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Validate: PowerShell Syntax",
+      "type": "process",
+      "command": "powershell.exe",
+      "args": [
+        "-NoLogo",
+        "-NoProfile",
+        "-NonInteractive",
+        "-Command",
+        "Set-StrictMode -Version Latest; $ErrorActionPreference = 'Stop'; $root = $env:WINDOWS_MASTER_ROOT; $excluded = '\\\\(?:\\.git|\\.venv|venv|__pycache__|Sandbox)(?:\\\\|$)'; $failed = $false; $files = @(Get-ChildItem -LiteralPath $root -Recurse -File | Where-Object { $_.Extension -in '.ps1', '.psm1', '.psd1' -and $_.FullName -notmatch $excluded }); foreach ($file in $files) { $tokens = $null; $errors = $null; [void][System.Management.Automation.Language.Parser]::ParseFile($file.FullName, [ref]$tokens, [ref]$errors); foreach ($parseError in $errors) { [Console]::Error.WriteLine(('{0}:{1}:{2}: {3}' -f $file.FullName, $parseError.Extent.StartLineNumber, $parseError.Extent.StartColumnNumber, $parseError.Message)); $failed = $true } }; if ($failed) { exit 1 }; Write-Host ('Validated {0} PowerShell file(s).' -f $files.Count)"
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}",
+        "env": {
+          "WINDOWS_MASTER_ROOT": "${workspaceFolder}"
+        }
+      },
+      "problemMatcher": [],
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "dedicated",
+        "clear": true
+      }
+    },
+    {
+      "label": "Lint: PowerShell (PSScriptAnalyzer)",
+      "type": "process",
+      "command": "powershell.exe",
+      "args": [
+        "-NoLogo",
+        "-NoProfile",
+        "-NonInteractive",
+        "-Command",
+        "Set-StrictMode -Version Latest; $ErrorActionPreference = 'Stop'; if (-not (Get-Module -ListAvailable -Name PSScriptAnalyzer)) { throw 'PSScriptAnalyzer is required. Install it through the repository-approved dependency process.' }; Import-Module PSScriptAnalyzer -ErrorAction Stop; $root = $env:WINDOWS_MASTER_ROOT; $excluded = '\\\\(?:\\.git|\\.venv|venv|__pycache__|Sandbox)(?:\\\\|$)'; $files = @(Get-ChildItem -LiteralPath $root -Recurse -File | Where-Object { $_.Extension -in '.ps1', '.psm1', '.psd1' -and $_.FullName -notmatch $excluded }); $findings = @($files | ForEach-Object { Invoke-ScriptAnalyzer -Path $_.FullName -Severity Warning, Error }); foreach ($finding in $findings) { [Console]::Error.WriteLine(('{0}:{1}:{2}: {3} [{4}]' -f $finding.ScriptPath, $finding.Line, $finding.Column, $finding.Message, $finding.RuleName)) }; if ($findings.Count -gt 0) { exit 1 }; Write-Host ('Analyzed {0} PowerShell file(s).' -f $files.Count)"
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}",
+        "env": {
+          "WINDOWS_MASTER_ROOT": "${workspaceFolder}"
+        }
+      },
+      "problemMatcher": [],
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "dedicated",
+        "clear": true
+      }
+    },
+    {
+      "label": "Lint: Python (Ruff)",
+      "type": "process",
+      "command": "${command:python.interpreterPath}",
+      "args": [
+        "-m",
+        "ruff",
+        "check",
+        "--output-format",
+        "concise",
+        "${workspaceFolder}"
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}",
+        "env": {
+          "PYTHONUTF8": "1",
+          "PYTHONDONTWRITEBYTECODE": "1"
+        }
+      },
+      "problemMatcher": [],
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "dedicated",
+        "clear": true
+      }
+    },
+    {
+      "label": "Test: Python (pytest)",
+      "type": "process",
+      "command": "${command:python.interpreterPath}",
+      "args": [
+        "-m",
+        "pytest",
+        "-p",
+        "no:cacheprovider",
+        "${workspaceFolder}"
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}",
+        "env": {
+          "PYTHONUTF8": "1",
+          "PYTHONDONTWRITEBYTECODE": "1"
+        }
+      },
+      "problemMatcher": [],
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "dedicated",
+        "clear": true
+      }
+    },
+    {
+      "label": "Git: Status",
+      "type": "process",
+      "command": "git",
+      "args": [
+        "-C",
+        "${workspaceFolder}",
+        "status",
+        "--short",
+        "--branch"
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "problemMatcher": [],
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "dedicated",
+        "clear": true
+      }
+    },
+    {
+      "label": "Validate: Workspace",
+      "dependsOrder": "sequence",
+      "dependsOn": [
+        "Validate: PowerShell Syntax",
+        "Lint: PowerShell (PSScriptAnalyzer)",
+        "Lint: Python (Ruff)",
+        "Test: Python (pytest)"
+      ],
+      "problemMatcher": []
+    }
+  ]
+}

@@ -1,0 +1,16 @@
+[
+  {
+    "key": "ctrl+alt+shift+c",
+    "command": "chatgpt.openSidebar"
+  },
+  {
+    "key": "ctrl+alt+shift+n",
+    "command": "chatgpt.newChat"
+  },
+  {
+    "key": "ctrl+alt+shift+v",
+    "command": "workbench.action.tasks.runTask",
+    "args": "Validate: Workspace",
+    "when": "workspaceFolderCount > 0"
+  }
+]
