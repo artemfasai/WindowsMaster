@@ -11,7 +11,7 @@ Windows Master provides secure, repeatable, and auditable automation for Windows
 - `Config/` - versioned, non-secret configuration and configuration examples.
 - `Templates/` - reusable scripts, documents, and project scaffolds.
 - `Documents/` - architecture decisions, runbooks, specifications, and recovery procedures.
-- `Agents/` - AI agent definitions, prompts, policies, and supporting resources.
+- `agents/` - AI agent definitions, prompts, policies, and supporting resources.
 - `Sandbox/` - isolated experiments; production workflows must not depend on it.
 - `Backups/` - local backup manifests or approved backup artifacts.
 - `Logs/` - sanitized runtime logs; sensitive or high-volume logs belong in approved external storage.
@@ -170,3 +170,15 @@ Record required Windows edition, architecture, PowerShell or Python version, dep
 Every maintained project needs a README covering purpose, prerequisites, setup, configuration, usage, testing, troubleshooting, ownership, and support status. Operational changes require a runbook with prechecks, exact steps, expected output, rollback, verification, and escalation guidance.
 
 Use Architecture Decision Records in `Documents/` for consequential design or security choices. Commands must be copy-safe, scoped, and annotated when they require elevation or cause state changes. Keep examples sanitized and versioned with the code they describe. Review documentation whenever interfaces, dependencies, permissions, operational behavior, or recovery procedures change.
+
+## Workspace Localization and Agent Contracts
+
+Нова та суттєво оновлена документація має бути українською. Code, filenames,
+commands, API names і загальноприйняті технічні identifiers залишаються English,
+коли переклад погіршує точність або copy-safety.
+
+Рольові контракти зберігаються в `agents/<role>/AGENT.md`. Вони можуть звужувати
+scope, tools і termination conditions конкретної ролі, але не можуть
+послаблювати цю кореневу політику, надавати додаткові повноваження чи замінювати
+operation-specific approval. Координатор відповідає за scope, approvals,
+conflict resolution і final verification.

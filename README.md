@@ -1,5 +1,18 @@
 # Windows Master
 
+> **Українська навігація.** Windows Master — Windows-first платформа для
+> безпечної, відтворюваної та аудитованої адміністративної автоматизації.
+> Обов'язкові правила містить [AGENTS.md](AGENTS.md), план розвитку —
+> [ROADMAP.md](ROADMAP.md), журнал змін — [CHANGELOG.md](CHANGELOG.md), а
+> контракти AI-ролей — [agents/README.md](agents/README.md). Інструкції для
+> конкретних AI-інструментів наведено в [CODEX.md](CODEX.md) і
+> [CLAUDE.md](CLAUDE.md). Нова документація створюється українською; code,
+> filenames і commands залишаються English.
+>
+> Наявний нижче англомовний опис збережено як початковий архітектурний контекст.
+> Під час подальших змістовних оновлень його слід поступово локалізувати без
+> втрати вимог.
+
 Windows Master is a long-term engineering platform for secure, repeatable, and
 auditable Windows administration. It is intended to bring automation, policy,
 recovery, observability, and bounded AI-assisted operations into one governed
@@ -65,10 +78,10 @@ projects, but they must not weaken the root policy.
 | Area | State | Evidence |
 | --- | --- | --- |
 | Repository governance | Established | Root `AGENTS.md` defines safety, approval, security, testing, and operational policies |
-| Repository layout | Established | Standard directories exist for projects, scripts, configuration, documentation, agents, templates, logs, backups, and experiments |
+| Repository layout | Initial | Agent role directories exist; application, automation, configuration, and operational directories will be added with their first governed component |
 | Source-control hygiene | Established | Root `.gitignore` covers secrets, local environments, caches, generated output, and runtime artifacts |
-| Editor integration | Initial | Portable VS Code settings, tasks, launch configurations, and extension recommendations are present |
-| Validation workflow | Initial | VS Code tasks are configured for PowerShell syntax, PSScriptAnalyzer, Ruff, and pytest |
+| Editor integration | Planned | Portable shared `.vscode` configuration has not yet been added |
+| Validation workflow | Planned | Repository-level PowerShell, PSScriptAnalyzer, Ruff, and pytest tasks have not yet been implemented |
 | Production automation | Not started | No production scripts, modules, or applications are present |
 | Automated test suites | Not started | No project test suites or fixtures are present |
 | CI/CD and release process | Not started | No pipeline, artifact publication, or release policy is implemented |
@@ -199,7 +212,7 @@ timeouts, and failure behavior. Their output is treated as untrusted input.
 | `Config/` | Versioned, non-secret configuration and configuration examples |
 | `Templates/` | Reusable scripts, documents, runbooks, and project scaffolds |
 | `Documents/` | Architecture decisions, specifications, runbooks, and recovery procedures |
-| `Agents/` | AI agent definitions, prompts, policies, and supporting resources |
+| `agents/` | AI agent definitions, prompts, policies, and supporting resources |
 | `Sandbox/` | Isolated experiments; production workflows must not depend on it |
 | `Backups/` | Approved local backup artifacts or backup manifests |
 | `Logs/` | Sanitized, bounded runtime logs suitable for repository storage |
@@ -261,8 +274,8 @@ These tools are development scaffolding, not a declared production runtime.
 2. Read [AGENTS.md](AGENTS.md) before making changes.
 3. Review `git status` and confirm that the working tree contains no unrelated
    changes.
-4. Open the repository root in Visual Studio Code if using the provided workspace
-   configuration.
+4. Open the repository root in the approved editor. Shared VS Code workspace
+   configuration has not yet been established.
 5. Install only the dependencies required by the project being changed, using its
    documented and pinned setup process.
 6. Perform administrative integration tests only in a disposable VM, Windows
@@ -314,17 +327,17 @@ Tests should cover normal, failure, boundary, permission-denied, timeout, and
 rollback paths. They must be independent, reproducible, and limited to resources
 they create.
 
-The VS Code task **Validate: Workspace** runs the configured checks in sequence:
+The planned workspace validation workflow will run these checks in sequence:
 
 1. PowerShell syntax validation
 2. PSScriptAnalyzer
 3. Ruff
 4. pytest
 
-Projects may add stricter checks. Before committing, review the complete diff and
-run all relevant formatters, linters, tests, security checks, and isolated
-integration tests. Document commands and sanitized results in the change or pull
-request.
+This workflow is not implemented yet. Projects may add stricter checks. Before
+committing, review the complete diff and run all relevant available formatters,
+linters, tests, security checks, and isolated integration tests. Document
+commands and sanitized results in the change or pull request.
 
 ## Security and Approval Model
 
@@ -415,6 +428,6 @@ Every production-capable component must identify:
 
 ## License
 
-No license has been declared. Do not assume permission to use, redistribute,
-modify, or publish this repository outside the authorization granted by its
-owner. Add an approved `LICENSE` file before external distribution.
+The current [LICENSE](LICENSE) reserves all rights and does not authorize external
+distribution. The owner must approve a final licensing model before publication,
+redistribution, or third-party use.
